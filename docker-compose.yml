@@ -1,0 +1,168 @@
+# -------------------------------------------------------
+# 📡 The Machine — docker-compose.yml
+# "You are being watched."
+# -------------------------------------------------------
+
+services:
+
+  # 🔴 The Machine — Coordinator
+  the-machine:
+    build:
+      context: .
+      dockerfile: Dockerfile.lean
+    container_name: the-machine
+    restart: unless-stopped
+    environment:
+      - AGENT_NAME=the-machine
+      - AGENT_DISPLAY_NAME=The Machine
+      - AGENT_ROLE=Coordinator & Task Routing
+      - PROVIDER_TYPE=openai
+      - API_KEY=${XAI_API_KEY}
+      - API_BASE_URL=https://api.x.ai/v1
+      - MODEL=grok-4-1-fast
+      - TEMPERATURE=0.7
+      - SLACK_BOT_TOKEN=${MACHINE_SLACK_BOT_TOKEN}
+      - SLACK_APP_TOKEN=${MACHINE_SLACK_APP_TOKEN}
+      - SLACK_USER_ID=${SLACK_USER_ID}
+      - GATEWAY_PORT=42617
+    volumes:
+      - projects:/workspace/projects
+      - shared:/workspace/shared
+      - machine-memory:/root/.zeroclaw/memory
+      - ./agents/the-machine/config/identity.md:/root/.zeroclaw/workspace/IDENTITY.md:ro
+      - ./agents/the-machine/config/zeroclaw.toml:/root/.zeroclaw/config.toml.template:ro
+      - ./agents/the-machine/skills:/root/.zeroclaw/workspace/skills:ro
+    ports:
+      - "42617:42617"
+    healthcheck:
+      test: ["CMD", "zeroclaw", "status"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # 🔫 Reese — Software Engineer
+  reese:
+    build:
+      context: .
+      dockerfile: Dockerfile.full
+    container_name: reese
+    restart: unless-stopped
+    environment:
+      - AGENT_NAME=reese
+      - AGENT_DISPLAY_NAME=Reese
+      - AGENT_ROLE=Software Engineer
+      - PROVIDER_TYPE=custom
+      - API_KEY=${ZAI_API_KEY}
+      - API_BASE_URL=https://api.z.ai/api/coding/paas/v4
+      - MODEL=glm-5
+      - TEMPERATURE=0.4
+      - SLACK_BOT_TOKEN=${REESE_SLACK_BOT_TOKEN}
+      - SLACK_APP_TOKEN=${REESE_SLACK_APP_TOKEN}
+      - SLACK_USER_ID=${SLACK_USER_ID}
+      - GITHUB_TOKEN=${GITHUB_TOKEN:-}
+      - GIT_USER_NAME=${GIT_USER_NAME:-Reese}
+      - GIT_USER_EMAIL=${GIT_USER_EMAIL:-reese@machine.local}
+      - GATEWAY_PORT=42618
+    volumes:
+      - projects:/workspace/projects
+      - shared:/workspace/shared
+      - reese-memory:/root/.zeroclaw/memory
+      - ./agents/reese/config/identity.md:/root/.zeroclaw/workspace/IDENTITY.md:ro
+      - ./agents/reese/config/zeroclaw.toml:/root/.zeroclaw/config.toml.template:ro
+      - ./agents/reese/skills:/root/.zeroclaw/workspace/skills:ro
+    ports:
+      - "42618:42618"
+    healthcheck:
+      test: ["CMD", "zeroclaw", "status"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # 👔 Finch — Research & Intelligence
+  finch:
+    build:
+      context: .
+      dockerfile: Dockerfile.lean
+    container_name: finch
+    restart: unless-stopped
+    environment:
+      - AGENT_NAME=finch
+      - AGENT_DISPLAY_NAME=Finch
+      - AGENT_ROLE=Research & Intelligence
+      - PROVIDER_TYPE=openai
+      - API_KEY=${XAI_API_KEY}
+      - API_BASE_URL=https://api.x.ai/v1
+      - MODEL=grok-4-1-fast
+      - TEMPERATURE=0.5
+      - SLACK_BOT_TOKEN=${FINCH_SLACK_BOT_TOKEN}
+      - SLACK_APP_TOKEN=${FINCH_SLACK_APP_TOKEN}
+      - SLACK_USER_ID=${SLACK_USER_ID}
+      - PERPLEXITY_API_KEY=${PERPLEXITY_API_KEY:-}
+      - GATEWAY_PORT=42619
+    volumes:
+      - projects:/workspace/projects
+      - shared:/workspace/shared
+      - finch-memory:/root/.zeroclaw/memory
+      - ./agents/finch/config/identity.md:/root/.zeroclaw/workspace/IDENTITY.md:ro
+      - ./agents/finch/config/zeroclaw.toml:/root/.zeroclaw/config.toml.template:ro
+      - ./agents/finch/skills:/root/.zeroclaw/workspace/skills:ro
+    ports:
+      - "42619:42619"
+    healthcheck:
+      test: ["CMD", "zeroclaw", "status"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # 👠 Zoe — Content & Social Media
+  zoe:
+    build:
+      context: .
+      dockerfile: Dockerfile.lean
+    container_name: zoe
+    restart: unless-stopped
+    environment:
+      - AGENT_NAME=zoe
+      - AGENT_DISPLAY_NAME=Zoe
+      - AGENT_ROLE=Content & Social Media
+      - PROVIDER_TYPE=openai
+      - API_KEY=${XAI_API_KEY}
+      - API_BASE_URL=https://api.x.ai/v1
+      - MODEL=grok-4-1-fast
+      - TEMPERATURE=0.8
+      - SLACK_BOT_TOKEN=${ZOE_SLACK_BOT_TOKEN}
+      - SLACK_APP_TOKEN=${ZOE_SLACK_APP_TOKEN}
+      - SLACK_USER_ID=${SLACK_USER_ID}
+      - GATEWAY_PORT=42620
+    volumes:
+      - projects:/workspace/projects
+      - shared:/workspace/shared
+      - zoe-memory:/root/.zeroclaw/memory
+      - ./agents/zoe/config/identity.md:/root/.zeroclaw/workspace/IDENTITY.md:ro
+      - ./agents/zoe/config/zeroclaw.toml:/root/.zeroclaw/config.toml.template:ro
+      - ./agents/zoe/skills:/root/.zeroclaw/workspace/skills:ro
+    ports:
+      - "42620:42620"
+    healthcheck:
+      test: ["CMD", "zeroclaw", "status"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  projects:
+    driver: local
+  shared:
+    driver: local
+  machine-memory:
+    driver: local
+  reese-memory:
+    driver: local
+  finch-memory:
+    driver: local
+  zoe-memory:
+    driver: local

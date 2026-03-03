@@ -1,0 +1,71 @@
+FROM ubuntu:24.04
+
+# -------------------------------------------------------
+# 🔫 Reese — Full Build Agent Image
+# GLM-5 via Z.AI + Claude Code + create-01x-project
+# -------------------------------------------------------
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# System dependencies (full build tooling)
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    openssh-client \
+    build-essential \
+    pkg-config \
+    libssl-dev \
+    python3 \
+    python3-pip \
+    python3-venv \
+    jq \
+    unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js 22
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Rust
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
+
+# Install Claude Code globally
+RUN npm install -g @anthropic-ai/claude-code
+
+# Install create-01x-project globally
+RUN npm install -g create-01x-project
+
+# Install ZeroClaw
+RUN cargo install zeroclaw --locked || \
+    (git clone https://github.com/zeroclaw-labs/zeroclaw.git /tmp/zeroclaw && \
+     cd /tmp/zeroclaw && \
+     cargo build --release && \
+     cp target/release/zeroclaw /usr/local/bin/ && \
+     rm -rf /tmp/zeroclaw)
+
+# Create directories
+RUN mkdir -p /workspace/projects \
+    /workspace/shared \
+    /root/.claude \
+    /root/.zeroclaw/workspace/skills \
+    /root/.ssh
+
+# Git defaults
+RUN git config --global credential.helper store \
+    && git config --global init.defaultBranch main \
+    && git config --global core.autocrlf input
+
+# SSH config for private repo cloning
+RUN echo "Host github.com\n  StrictHostKeyChecking no\n  UserKnownHostsFile /dev/null" > /root/.ssh/config \
+    && chmod 600 /root/.ssh/config
+
+# Copy scripts
+COPY scripts/entrypoint-full.sh /entrypoint.sh
+COPY scripts/build-handler.sh /usr/local/bin/build-handler
+RUN chmod +x /entrypoint.sh /usr/local/bin/build-handler
+
+WORKDIR /workspace
+
+ENTRYPOINT ["/entrypoint.sh"]

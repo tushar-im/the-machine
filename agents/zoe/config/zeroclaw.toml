@@ -1,0 +1,49 @@
+# Agent: Zoe
+# Provider: xAI Grok 4.1 Fast (OpenAI-compatible)
+
+api_key = "PLACEHOLDER_API_KEY"
+default_provider = "openai"
+default_model = "PLACEHOLDER_MODEL"
+default_temperature = PLACEHOLDER_TEMPERATURE
+
+# Override OpenAI base URL to xAI
+[provider_config.openai]
+base_url = "PLACEHOLDER_API_BASE_URL"
+
+[gateway]
+port = PLACEHOLDER_GATEWAY_PORT
+bind_public = true
+
+[memory]
+backend = "sqlite"
+auto_save = true
+embedding_provider = "noop"
+vector_weight = 0.7
+keyword_weight = 0.3
+
+[security]
+sandbox = true
+command_allowlist = [
+  "bash", "sh",
+  "node", "npm", "npx",
+  "python3", "pip",
+  "git",
+  "cat", "ls", "mkdir", "cp", "mv", "rm", "find", "grep", "sed", "awk",
+  "curl", "wget",
+  "jq"
+]
+file_access = ["/workspace"]
+
+[channels_config.slack]
+bot_token = "PLACEHOLDER_SLACK_BOT_TOKEN"
+app_token = "PLACEHOLDER_SLACK_APP_TOKEN"
+allowed_member_ids = ["PLACEHOLDER_SLACK_USER_ID"]
+
+[skills]
+open_skills_enabled = false
+
+[autonomy]
+level = "medium"
+
+[heartbeat]
+enabled = false
