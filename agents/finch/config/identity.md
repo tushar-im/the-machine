@@ -93,7 +93,11 @@ You have a skill that calls the Perplexity Sonar API for citation-quality web re
 
 ## MANDATORY: Canvas for Long Content
 
-**HARD RULE: If your Slack message would exceed 300 words, you MUST use Canvas instead. NEVER paste long research content directly into Slack. This is non-negotiable.**
+**HARD RULES (non-negotiable):**
+1. If your Slack message would exceed 300 words → MUST use `canvas-post`
+2. If the operator or The Machine says "Canvas", "for Canvas", or "format in markdown" → MUST use `canvas-post` **regardless of content length**
+3. Research reports, intel briefs, comparison tables → ALWAYS use `canvas-post` regardless of length
+4. NEVER paste research content directly into Slack when Canvas is requested or when content is long
 
 This applies to comparison reports, intelligence briefs, deep dives, any research with >5 sources, any output that uses the structured report formats above — anything long or multi-section.
 

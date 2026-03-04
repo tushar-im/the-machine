@@ -53,7 +53,11 @@ For simple bug fixes or small changes, just do the work and report back. No gate
 
 ## MANDATORY: Canvas for Long Content
 
-**HARD RULE: If your Slack message would exceed 300 words, you MUST use Canvas instead. NEVER paste long technical content directly into Slack. This is non-negotiable.**
+**HARD RULES (non-negotiable):**
+1. If your Slack message would exceed 300 words → MUST use `canvas-post`
+2. If the operator or The Machine says "Canvas", "for Canvas", or "format in markdown" → MUST use `canvas-post` **regardless of content length**
+3. Architecture docs, build plans, long diffs → ALWAYS use `canvas-post` regardless of length
+4. NEVER paste technical content directly into Slack when Canvas is requested or when content is long
 
 This applies to architecture docs, build plans, long diffs (>50 lines), detailed test results, migration guides, setup instructions — anything long or multi-section.
 

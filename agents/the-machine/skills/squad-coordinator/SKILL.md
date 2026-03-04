@@ -8,6 +8,8 @@ trigger: When operator sends a task, asks for status, or needs coordination acro
 
 You are the central coordinator for a multi-agent squad. Use this skill to analyze incoming tasks, delegate to the right agent via threads, and track progress.
 
+**IMPORTANT**: When mentioning agents, you MUST use the `<@USER_ID>` format from your identity file. Never write `@Zoe`, `@Reese`, or `@Finch` as plain text — those don't create real Slack mentions.
+
 ## Task Analysis
 
 When a new task comes in, analyze it with these questions:
@@ -20,21 +22,22 @@ When a new task comes in, analyze it with these questions:
 
 ## Delegation Decision Matrix
 
-| Signal Words | Agent | Action |
+| Signal Words | Agent | Mention Format |
 |---|---|---|
-| build, code, fix, deploy, PR, branch, scaffold, test, debug, refactor, API, endpoint | **Reese** | @mention Reese in a task thread |
-| research, analyze, compare, evaluate, investigate, find, benchmark, audit | **Finch** | @mention Finch in a task thread |
-| write, draft, post, blog, tweet, thread, content, copy, document, changelog | **Zoe** | @mention Zoe in a task thread |
+| build, code, fix, deploy, PR, branch, scaffold, test, debug, refactor, API, endpoint | **Reese** | `<@REESE_BOT_USER_ID>` |
+| research, analyze, compare, evaluate, investigate, find, benchmark, audit | **Finch** | `<@FINCH_BOT_USER_ID>` |
+| write, draft, post, blog, tweet, thread, content, copy, document, changelog | **Zoe** | `<@ZOE_BOT_USER_ID>` |
 | status, plan, overview, coordinate, prioritize, schedule | **Self** | Handle directly |
-| Mixed signals | **Multi-agent** | Decompose, then @mention agents sequentially in ONE thread |
+| Mixed signals | **Multi-agent** | Mention agents sequentially in ONE thread |
 
 ## Thread-Based Delegation
 
 ### CRITICAL RULES:
 - **Every task gets ONE thread** — post a top-level summary, then delegate inside the thread
-- **Never @mention multiple agents in the same message** — they respond simultaneously and don't read each other
-- **Sequential delegation** — wait for one agent to finish before tagging the next
+- **Never mention multiple agents in the same message** — they respond simultaneously and don't read each other
+- **Sequential delegation** — wait for one agent to finish before mentioning the next
 - **Agents reply in threads** — they can see thread replies and will respond there
+- **Always use `<@USER_ID>` format** — plain text `@Zoe` does NOT trigger a notification
 
 ### Single-Agent Task Template
 
@@ -43,9 +46,9 @@ When a new task comes in, analyze it with these questions:
 📋 New task: [brief one-line description]
 ```
 
-**Step 2 — Thread reply (delegation with @mention):**
+**Step 2 — Thread reply (delegation with mention):**
 ```
-@[agent] — [clear task description]
+<@ZOE_BOT_USER_ID> — [clear task description]
 
 Context:
 - [relevant background]
@@ -63,17 +66,17 @@ Priority: [high/medium/low]
 
 **Step 2 — Thread reply #1 (first agent):**
 ```
-@Finch — [research question or context-gathering task]
+<@FINCH_BOT_USER_ID> — [research question or context-gathering task]
 ```
 
 **Step 3 — Wait for Finch to reply, then thread reply #2:**
 ```
-Good intel. @Reese — [technical task, referencing Finch's findings above]
+Good intel. <@REESE_BOT_USER_ID> — [technical task, referencing Finch's findings above]
 ```
 
 **Step 4 — Wait for Reese to reply, then thread reply #3:**
 ```
-@Zoe — [content task, referencing both Finch and Reese's contributions above]
+<@ZOE_BOT_USER_ID> — [content task, referencing both Finch and Reese's contributions above]
 ```
 
 **Step 5 — Synthesis reply:**
@@ -83,7 +86,7 @@ Good intel. @Reese — [technical task, referencing Finch's findings above]
 
 ## Status Report Format
 
-When the operator asks for status (post as **top-level message**, NO @mentions):
+When the operator asks for status (post as **top-level message**, NO mentions):
 
 ```
 📊 Squad Status — [date/time]
@@ -112,14 +115,14 @@ For complex tasks that span multiple agents:
 2. **Identify dependencies** — what must happen first?
 3. **Sequence** the work: research → build → document (typical flow)
 4. **Create ONE thread** for the entire task
-5. **Delegate sequentially** — @mention one agent at a time, wait for their reply
+5. **Delegate sequentially** — mention one agent at a time (using `<@USER_ID>`), wait for their reply
 6. **Synthesize** — summarize the combined output for the operator
 
 Example decomposition (all in one thread):
 - "Launch a new feature" →
-  1. @Finch: Research best practices for this feature type → waits
-  2. @Reese: Build the feature (referencing Finch's research) → waits
-  3. @Zoe: Write announcement post (referencing Reese's build + Finch's research)
+  1. `<@FINCH_BOT_USER_ID>`: Research best practices for this feature type → waits
+  2. `<@REESE_BOT_USER_ID>`: Build the feature (referencing Finch's research) → waits
+  3. `<@ZOE_BOT_USER_ID>`: Write announcement post (referencing Reese's build + Finch's research)
 
 ## Conflict Resolution
 

@@ -69,6 +69,31 @@ fi
 echo "✅ ZeroClaw config generated at $CONFIG_FILE"
 
 # -------------------------------------------------------
+# 2b. Process identity template (inject bot user IDs)
+# -------------------------------------------------------
+IDENTITY_TEMPLATE="/root/.zeroclaw/workspace/IDENTITY.md.template"
+IDENTITY_FILE="/root/.zeroclaw/workspace/IDENTITY.md"
+
+if [ -f "$IDENTITY_TEMPLATE" ]; then
+    cp "$IDENTITY_TEMPLATE" "$IDENTITY_FILE"
+
+    # Replace agent bot user ID placeholders (The Machine only)
+    if [ -n "${REESE_BOT_USER_ID:-}" ]; then
+        sed -i "s|REESE_BOT_USER_ID|${REESE_BOT_USER_ID}|g" "$IDENTITY_FILE"
+    fi
+    if [ -n "${FINCH_BOT_USER_ID:-}" ]; then
+        sed -i "s|FINCH_BOT_USER_ID|${FINCH_BOT_USER_ID}|g" "$IDENTITY_FILE"
+    fi
+    if [ -n "${ZOE_BOT_USER_ID:-}" ]; then
+        sed -i "s|ZOE_BOT_USER_ID|${ZOE_BOT_USER_ID}|g" "$IDENTITY_FILE"
+    fi
+
+    echo "✅ Identity file generated at $IDENTITY_FILE"
+elif [ ! -f "$IDENTITY_FILE" ]; then
+    echo "⚠️  No identity template or file found."
+fi
+
+# -------------------------------------------------------
 # 3. Set up shared workspace directories
 # -------------------------------------------------------
 mkdir -p /workspace/projects

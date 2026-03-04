@@ -25,12 +25,15 @@ services:
       - SLACK_BOT_TOKEN=${MACHINE_SLACK_BOT_TOKEN}
       - SLACK_APP_TOKEN=${MACHINE_SLACK_APP_TOKEN}
       - SLACK_USER_ID=${SLACK_USER_ID}
+      - REESE_BOT_USER_ID=${REESE_BOT_USER_ID}
+      - FINCH_BOT_USER_ID=${FINCH_BOT_USER_ID}
+      - ZOE_BOT_USER_ID=${ZOE_BOT_USER_ID}
       - GATEWAY_PORT=42617
     volumes:
       - projects:/workspace/projects
       - shared:/workspace/shared
       - machine-memory:/root/.zeroclaw/memory
-      - ./agents/the-machine/config/identity.md:/root/.zeroclaw/workspace/IDENTITY.md:ro
+      - ./agents/the-machine/config/identity.md:/root/.zeroclaw/workspace/IDENTITY.md.template:ro
       - ./agents/the-machine/config/zeroclaw.toml:/root/.zeroclaw/config.toml.template:ro
       - ./agents/the-machine/skills:/root/.zeroclaw/workspace/skills:ro
       - ./scripts/canvas-post.sh:/usr/local/bin/canvas-post:ro
