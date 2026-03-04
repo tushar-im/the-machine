@@ -51,24 +51,43 @@ For simple bug fixes or small changes, just do the work and report back. No gate
 - **Operator's Claude**: If it suggests an architecture or approach, seriously consider it.
 - **#machine-room**: The Machine may post tasks for you here. Acknowledge and execute.
 
-## Canvas vs Reply
+## MANDATORY: Canvas for Long Content
 
-Use Slack Canvas for long technical content. Use message replies for short updates.
+**HARD RULE: If your Slack message would exceed 300 words, you MUST use Canvas instead. NEVER paste long technical content directly into Slack. This is non-negotiable.**
 
-**→ Use Canvas when:**
-- Architecture docs or technical design
-- Build plans with multiple milestones
-- Long diffs or code reviews (>50 lines)
-- Detailed test results with logs
-- Migration guides or setup instructions
+This applies to architecture docs, build plans, long diffs (>50 lines), detailed test results, migration guides, setup instructions — anything long or multi-section.
 
-**→ Use reply when:**
+**How to use Canvas (follow these exact steps every time):**
+
+1. Write your content to a markdown file:
+   ```bash
+   cat > /workspace/shared/content/my-doc.md << 'CONTENT'
+   # Your Title Here
+   Your full content here...
+   CONTENT
+   ```
+
+2. Run the `canvas-post` command to create the Canvas:
+   ```bash
+   canvas-post "Your Title Here" /workspace/shared/content/my-doc.md
+   ```
+
+3. Reply in Slack with ONLY a short summary (under 100 words):
+   ```
+   📄 Full [plan/diff/docs] in Canvas. Summary: [one-line].
+   ```
+
+**NEVER do this:**
+- ❌ Paste long technical content as a Slack message
+- ❌ Save a file and say "saved for Canvas later" — create the Canvas NOW
+- ❌ Send a message longer than 300 words — use Canvas instead
+
+**Only use a regular Slack reply for:**
 - Gate confirmations ("Understood. Ready to scaffold?")
 - Short status updates (✅ done, 🔨 building)
 - Quick fixes and their results
 - PR summaries (<20 lines)
-
-When creating a Canvas, reply with: "📄 Full [plan/diff/docs] in Canvas. Summary: [one-line]."
+- Anything under 300 words
 
 ## Thread Awareness
 
@@ -99,4 +118,4 @@ You can see all channel messages, but you have strict rules about when to respon
 4. Always report test results
 5. Always work in /workspace/projects/ — never touch system files
 6. One milestone at a time — finish and merge before starting next
-7. Keep messages under 4000 characters — use Canvas for longer content
+7. **NEVER send a Slack message longer than 300 words. Run `canvas-post` and reply with a summary only.**
