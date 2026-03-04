@@ -70,7 +70,11 @@ app_token = "PLACEHOLDER_SLACK_APP_TOKEN"
 allowed_member_ids = ["PLACEHOLDER_SLACK_USER_ID"]
 ```
 
-The `allowed_member_ids` is the operator's Slack member ID (starts with `U`). This means each agent only responds to the operator's direct messages. For `#machine-room`, the agents will see all messages in the channel but only respond when mentioned or when the message is relevant to their role.
+The `allowed_member_ids` is the operator's Slack member ID (starts with `U`). This means each agent only responds to the operator's direct messages.
+
+**Event subscription strategy:**
+- **The Machine (coordinator)**: Subscribes to `message.channels`, `message.groups`, `app_mention`, and `message.im` — sees ALL channel messages for routing and coordination.
+- **Reese, Finch, Zoe (operatives)**: Subscribe to `app_mention` and `message.im` ONLY — they respond when @mentioned or DMed, not to every channel message.
 
 ---
 
@@ -1049,7 +1053,9 @@ PERPLEXITY_API_KEY=pplx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 # === Slack ===
 # Each agent is a separate Slack app. Create 4 apps at https://api.slack.com/apps
-# Each needs: Bot Token Scopes (chat:write, app_mentions:read, channels:history, im:history, im:read, im:write)
+# Each needs: Bot Token Scopes (chat:write, app_mentions:read, channels:read, im:history, im:read, im:write)
+# The Machine (coordinator) ALSO needs: channels:history, groups:history, message.channels, message.groups
+# Operatives (Reese, Finch, Zoe) only get: app_mention + message.im events
 # Enable Socket Mode and get an App-Level Token for each
 
 # Your Slack member ID (starts with U — find in your Slack profile)
@@ -1107,21 +1113,14 @@ Step-by-step guide for creating 4 Slack apps:
 1. Go to https://api.slack.com/apps → Create New App → From scratch
 2. Name: "The Machine" (repeat for Reese, Finch, Zoe)
 3. **Bot Token Scopes** (OAuth & Permissions):
-   - `chat:write` — send messages
-   - `app_mentions:read` — respond to @mentions
-   - `channels:history` — read channel messages
-   - `channels:read` — see channel list
-   - `im:history` — read DM history
-   - `im:read` — see DMs
-   - `im:write` — send DMs
-   - `groups:history` — read private channel messages (for #machine-room if private)
-   - `groups:read` — see private channels
+   - All agents: `chat:write`, `app_mentions:read`, `channels:read`, `im:history`, `im:read`, `im:write`, `groups:read`
+   - **The Machine only** (coordinator): also add `channels:history`, `groups:history`
+   - Do NOT add `channels:history` or `groups:history` to Reese, Finch, or Zoe
 4. **Enable Socket Mode**: Settings → Socket Mode → Enable. Create App-Level Token with `connections:write` scope.
 5. **Enable Events**: Event Subscriptions → Enable → Subscribe to:
-   - `message.im` — DMs
-   - `app_mention` — @mentions in channels
-   - `message.channels` — messages in public channels agent is in
-   - `message.groups` — messages in private channels agent is in
+   - All agents: `message.im`, `app_mention`
+   - **The Machine only** (coordinator): also add `message.channels`, `message.groups`
+   - Do NOT add `message.channels` or `message.groups` to Reese, Finch, or Zoe — this causes them to respond to every channel message
 6. **Install to Workspace**: Install App → copy Bot Token (xoxb-...) and App-Level Token (xapp-...)
 7. Repeat for all 4 agents
 8. Create `#machine-room` channel → invite all 4 bots

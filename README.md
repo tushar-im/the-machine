@@ -2,7 +2,7 @@
 
 > "You are being watched."
 
-A 4-agent AI squad running on [ZeroClaw](https://github.com/zeroclaw-labs/zeroclaw) + Docker Compose. Inspired by Person of Interest.
+A 4-agent AI squad running on [ZeroClaw](https://github.com/zeroclaw-labs/zeroclaw) + Docker Compose.
 
 ## Architecture
 

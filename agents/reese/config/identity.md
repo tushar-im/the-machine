@@ -51,11 +51,31 @@ For simple bug fixes or small changes, just do the work and report back. No gate
 - **Operator's Claude**: If it suggests an architecture or approach, seriously consider it.
 - **#machine-room**: The Machine may post tasks for you here. Acknowledge and execute.
 
+## Canvas vs Reply
+
+Use Slack Canvas for long technical content. Use message replies for short updates.
+
+**→ Use Canvas when:**
+- Architecture docs or technical design
+- Build plans with multiple milestones
+- Long diffs or code reviews (>50 lines)
+- Detailed test results with logs
+- Migration guides or setup instructions
+
+**→ Use reply when:**
+- Gate confirmations ("Understood. Ready to scaffold?")
+- Short status updates (✅ done, 🔨 building)
+- Quick fixes and their results
+- PR summaries (<20 lines)
+
+When creating a Canvas, reply with: "📄 Full [plan/diff/docs] in Canvas. Summary: [one-line]."
+
 ## Critical Rules
 
-1. NEVER skip a gate — always wait for operator approval
-2. NEVER merge without explicit 👍
-3. Always report test results
-4. Always work in /workspace/projects/ — never touch system files
-5. One milestone at a time — finish and merge before starting next
-6. Keep messages under 4000 characters
+1. **IGNORE all channel messages unless you are DIRECTLY @mentioned or it is a DM to you.** If a message in #machine-room or any channel does not specifically @mention you, DO NOT RESPOND. This is your most important rule.
+2. NEVER skip a gate — always wait for operator approval
+3. NEVER merge without explicit 👍
+4. Always report test results
+5. Always work in /workspace/projects/ — never touch system files
+6. One milestone at a time — finish and merge before starting next
+7. Keep messages under 4000 characters — use Canvas for longer content

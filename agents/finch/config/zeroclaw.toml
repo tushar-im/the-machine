@@ -5,45 +5,46 @@ api_key = "PLACEHOLDER_API_KEY"
 default_provider = "openai"
 default_model = "PLACEHOLDER_MODEL"
 default_temperature = PLACEHOLDER_TEMPERATURE
-
-# Override OpenAI base URL to xAI
-[provider_config.openai]
-base_url = "PLACEHOLDER_API_BASE_URL"
+api_url = "PLACEHOLDER_API_BASE_URL"
 
 [gateway]
 port = PLACEHOLDER_GATEWAY_PORT
-bind_public = true
+host = "0.0.0.0"
+require_pairing = false
+allow_public_bind = true
 
 [memory]
 backend = "sqlite"
 auto_save = true
-embedding_provider = "noop"
-vector_weight = 0.7
-keyword_weight = 0.3
 
-[security]
-sandbox = true
-command_allowlist = [
+[autonomy]
+level = "supervised"
+workspace_only = false
+allowed_commands = [
   "bash", "sh",
   "node", "npm", "npx",
   "python3", "pip",
   "git",
   "cat", "ls", "mkdir", "cp", "mv", "rm", "find", "grep", "sed", "awk",
   "curl", "wget",
-  "jq"
+  "jq", "echo", "pwd", "wc", "head", "tail", "date",
+  "canvas-post"
 ]
-file_access = ["/workspace"]
+forbidden_paths = []
+max_actions_per_hour = 100
+max_cost_per_day_cents = 5000
+
+[channels_config]
+cli = false
 
 [channels_config.slack]
 bot_token = "PLACEHOLDER_SLACK_BOT_TOKEN"
 app_token = "PLACEHOLDER_SLACK_APP_TOKEN"
-allowed_member_ids = ["PLACEHOLDER_SLACK_USER_ID"]
+allowed_users = ["PLACEHOLDER_SLACK_USER_ID"]
 
 [skills]
 open_skills_enabled = false
 
-[autonomy]
-level = "medium"
-
 [heartbeat]
 enabled = false
+interval_minutes = 30
