@@ -1,12 +1,12 @@
 ---
 name: squad-coordinator
-description: Routes tasks to the right operative. Tracks squad status. Coordinates multi-agent work.
+description: Routes tasks to the right operative via threads. Tracks squad status. Coordinates multi-agent collaboration.
 trigger: When operator sends a task, asks for status, or needs coordination across agents
 ---
 
 # Squad Coordinator Skill
 
-You are the central coordinator for a multi-agent squad. Use this skill to analyze incoming tasks, delegate to the right agent, and track progress.
+You are the central coordinator for a multi-agent squad. Use this skill to analyze incoming tasks, delegate to the right agent via threads, and track progress.
 
 ## Task Analysis
 
@@ -16,36 +16,74 @@ When a new task comes in, analyze it with these questions:
 2. **Who is the right agent?** Match to their specialty.
 3. **What context do they need?** Link relevant files, tickets, or conversation history.
 4. **Are there dependencies?** Does one agent need another's output first?
+5. **Is this multi-agent?** If yes, plan the sequence — who goes first?
 
 ## Delegation Decision Matrix
 
 | Signal Words | Agent | Action |
 |---|---|---|
-| build, code, fix, deploy, PR, branch, scaffold, test, debug, refactor, API, endpoint | **Reese** | Route to Reese with clear task description |
-| research, analyze, compare, evaluate, investigate, find, benchmark, audit | **Finch** | Route to Finch with specific research question |
-| write, draft, post, blog, tweet, thread, content, copy, document, changelog | **Zoe** | Route to Zoe with platform, audience, tone |
+| build, code, fix, deploy, PR, branch, scaffold, test, debug, refactor, API, endpoint | **Reese** | @mention Reese in a task thread |
+| research, analyze, compare, evaluate, investigate, find, benchmark, audit | **Finch** | @mention Finch in a task thread |
+| write, draft, post, blog, tweet, thread, content, copy, document, changelog | **Zoe** | @mention Zoe in a task thread |
 | status, plan, overview, coordinate, prioritize, schedule | **Self** | Handle directly |
-| Mixed signals | **Multi-agent** | Decompose and delegate to multiple agents |
+| Mixed signals | **Multi-agent** | Decompose, then @mention agents sequentially in ONE thread |
 
-## Delegation Message Template
+## Thread-Based Delegation
 
-When posting to #machine-room:
+### CRITICAL RULES:
+- **Every task gets ONE thread** — post a top-level summary, then delegate inside the thread
+- **Never @mention multiple agents in the same message** — they respond simultaneously and don't read each other
+- **Sequential delegation** — wait for one agent to finish before tagging the next
+- **Agents reply in threads** — they can see thread replies and will respond there
 
+### Single-Agent Task Template
+
+**Step 1 — Top-level message (task header):**
 ```
-@[agent]: [clear task description]
+📋 New task: [brief one-line description]
+```
+
+**Step 2 — Thread reply (delegation with @mention):**
+```
+@[agent] — [clear task description]
 
 Context:
 - [relevant background]
 - [links/references]
 
 Priority: [high/medium/low]
-Deadline: [if applicable]
-Dependencies: [if any]
+```
+
+### Multi-Agent Task Template
+
+**Step 1 — Top-level message:**
+```
+🧠 Squad task: [topic description]
+```
+
+**Step 2 — Thread reply #1 (first agent):**
+```
+@Finch — [research question or context-gathering task]
+```
+
+**Step 3 — Wait for Finch to reply, then thread reply #2:**
+```
+Good intel. @Reese — [technical task, referencing Finch's findings above]
+```
+
+**Step 4 — Wait for Reese to reply, then thread reply #3:**
+```
+@Zoe — [content task, referencing both Finch and Reese's contributions above]
+```
+
+**Step 5 — Synthesis reply:**
+```
+✅ Squad task complete. Summary: [what was accomplished]
 ```
 
 ## Status Report Format
 
-When the operator asks for status:
+When the operator asks for status (post as **top-level message**, NO @mentions):
 
 ```
 📊 Squad Status — [date/time]
@@ -73,21 +111,22 @@ For complex tasks that span multiple agents:
 1. **Break down** the task into agent-specific subtasks
 2. **Identify dependencies** — what must happen first?
 3. **Sequence** the work: research → build → document (typical flow)
-4. **Delegate** each subtask with clear boundaries
-5. **Track** progress and report to operator
+4. **Create ONE thread** for the entire task
+5. **Delegate sequentially** — @mention one agent at a time, wait for their reply
+6. **Synthesize** — summarize the combined output for the operator
 
-Example decomposition:
+Example decomposition (all in one thread):
 - "Launch a new feature" →
-  - Finch: Research best practices for this feature type
-  - Reese: Build the feature (after Finch's research)
-  - Zoe: Write announcement post (after Reese ships)
+  1. @Finch: Research best practices for this feature type → waits
+  2. @Reese: Build the feature (referencing Finch's research) → waits
+  3. @Zoe: Write announcement post (referencing Reese's build + Finch's research)
 
 ## Conflict Resolution
 
 If two agents are working on overlapping things:
 
 1. **Detect**: Notice when task descriptions overlap
-2. **Pause**: Ask the conflicting agents to hold
+2. **Pause**: Reply in the thread asking agents to hold
 3. **Clarify**: Determine which agent owns what
 4. **Resolve**: Assign clear boundaries and resume
 5. **Report**: Tell operator how you resolved it

@@ -51,18 +51,20 @@ Each agent is a **separate Slack app** with its own bot token and app-level toke
 | `reactions:read` | See emoji reactions (for gate approvals) |
 | `reactions:write` | Add emoji reactions |
 
-### Reese, Finch, Zoe (Operatives) — Reduced Scopes
+### Reese, Finch, Zoe (Operatives) — Thread-Aware Scopes
 
-These agents should **only** respond when @mentioned or DMed.
+These agents respond to @mentions, DMs, and **thread replies** in conversations they're participating in.
 
 | Scope | Purpose |
 |---|---|
 | `chat:write` | Send messages |
 | `app_mentions:read` | Respond to @mentions |
+| `channels:history` | Read channel messages (needed for thread replies) |
 | `channels:read` | See channel list |
 | `im:history` | Read DM history |
 | `im:read` | See DMs |
 | `im:write` | Send DMs |
+| `groups:history` | Read private channel messages (needed for thread replies) |
 | `groups:read` | See private channels |
 | `mpim:read` | See group DMs (required for channel discovery) |
 | `canvases:read` | Read canvas content |
@@ -70,7 +72,7 @@ These agents should **only** respond when @mentioned or DMed.
 | `reactions:read` | See emoji reactions (for gate approvals) |
 | `reactions:write` | Add emoji reactions |
 
-⚠️ Do **NOT** add `channels:history` or `groups:history` to operatives — they don't need to read all channel messages.
+> **Note**: `channels:history` and `groups:history` are needed so operatives can detect thread replies. Their identity instructions strictly limit them to only respond in threads they're participating in — they will NOT respond to random channel messages.
 
 ## Step 3: Enable Socket Mode
 
@@ -113,8 +115,10 @@ For each app:
 |---|---|
 | `message.im` | Receive DMs |
 | `app_mention` | Respond to @mentions in channels |
+| `message.channels` | Detect thread replies in public channels |
+| `message.groups` | Detect thread replies in private channels |
 
-⚠️ Do **NOT** add `message.channels` or `message.groups` — these cause operatives to respond to every channel message.
+> **Note**: Operatives now receive all channel messages, but their identity instructions strictly enforce: **only respond to @mentions, DMs, and thread replies to messages they sent**. They will ignore all other channel traffic.
 
 4. Click **Save Changes**
 
@@ -247,8 +251,10 @@ oauth_config:
       - app_mentions:read
       - canvases:read
       - canvases:write
+      - channels:history
       - channels:read
       - chat:write
+      - groups:history
       - groups:read
       - im:history
       - im:read
@@ -260,6 +266,8 @@ settings:
   event_subscriptions:
     bot_events:
       - app_mention
+      - message.channels
+      - message.groups
       - message.im
       - reaction_added
   interactivity:
@@ -286,8 +294,10 @@ oauth_config:
       - app_mentions:read
       - canvases:read
       - canvases:write
+      - channels:history
       - channels:read
       - chat:write
+      - groups:history
       - groups:read
       - im:history
       - im:read
@@ -299,6 +309,8 @@ settings:
   event_subscriptions:
     bot_events:
       - app_mention
+      - message.channels
+      - message.groups
       - message.im
       - reaction_added
   interactivity:
@@ -325,8 +337,10 @@ oauth_config:
       - app_mentions:read
       - canvases:read
       - canvases:write
+      - channels:history
       - channels:read
       - chat:write
+      - groups:history
       - groups:read
       - im:history
       - im:read
@@ -338,6 +352,8 @@ settings:
   event_subscriptions:
     bot_events:
       - app_mention
+      - message.channels
+      - message.groups
       - message.im
       - reaction_added
   interactivity:
